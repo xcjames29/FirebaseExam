@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components"
 import { login, signup } from "../redux/action/action";
 
@@ -58,7 +60,6 @@ const ErrorMessage = styled.p`
     font-weight: bold;
 `
 export default function Login(){
-
     let loginEmailRef = useRef();
     let loginPasswordRef = useRef();
 
@@ -67,16 +68,60 @@ export default function Login(){
     let signupPasswordRef = useRef();
     let signupConfirmPasswordRef = useRef();
 
-    let signUpAttemp = () =>{
-        console.log(signupNameRef.current.value);
-        console.log(signupPasswordRef.current.value);
-        console.log(signupConfirmPasswordRef.current.value);
-        console.log(signupEmailRef.current.value);
-    }
-
     let loginData = useSelector(state=>state.loginState);
     let dispatch = useDispatch();
     console.log(loginData);
+
+    let [nameError, setNameError] = useState("");
+    let [emailError, setEmailError] = useState("");
+    let [passwordError, setPasswordError] = useState("");
+    let [confirmPasswordError, setConfirmPasswordError] = useState("");
+    let validateSignup = ()=>{
+        let name = signupNameRef.current.value;
+        let email = signupEmailRef.current.value;
+        let password = signupPasswordRef.current.value;
+        let confirmPassword = signupConfirmPasswordRef.current.value;
+        let hasError = false;
+        if(name.length ===0) {
+            hasError = true;
+            setNameError("Please Enter Name!");
+        }
+        else setNameError("");
+        if(email.length ===0 ){ 
+            hasError = true;
+            setEmailError("Please Enter Email!");
+        }
+        else if(!/.+@.+\..+/.test(email)) {
+            hasError = true;
+            setEmailError("Please Enter Valid Email!");
+        }
+        else setEmailError("");
+
+        if(password.length===0){
+            hasError = true;
+            setPasswordError("Please Enter Password!")
+        }
+        else if(password.length <6){
+            hasError = true;
+            setPasswordError("Password must be at least 6 characters long!")
+        }
+        else setPasswordError("");
+
+        if(password!==confirmPassword){ 
+            hasError = true
+            setConfirmPasswordError("Password does not match!");
+        }
+        else setConfirmPasswordError("");
+
+        if(!hasError){
+            dispatch(signup(name,password,email));
+        }
+    }
+    let history = useHistory();
+
+    let gotoDisplay = ()=> history.push("/display");
+    let signupData = useSelector(state=>state.signupState);
+    console.log(signupData);
     return(
         <Container>
             <MainContainer>
@@ -87,19 +132,23 @@ export default function Login(){
                     <Label htmlFor="passwordLogin" > Password: </Label>
                     <InputField type="password" name="passwordLogin" ref={loginPasswordRef} />
                         <ErrorMessage>{loginData.error}</ErrorMessage>
-                    <Button onClick={()=>dispatch(login(loginEmailRef.current.value,loginPasswordRef.current.value))} disabled={loginData.loading}> Login </Button>
+                    <Button onClick={()=>dispatch(login(loginEmailRef.current.value,loginPasswordRef.current.value,gotoDisplay))} disabled={loginData.loading}> Login </Button>
                 </Divider>
                 <Divider>
                     <Heading>Signup</Heading>
                     <Label htmlFor="nameSignup"> Name: </Label>
                     <InputField type="text" name="nameSignup" ref={signupNameRef}/>
+                    <ErrorMessage>{nameError}</ErrorMessage>
                     <Label htmlFor="emailSignup"> Email: </Label>
                     <InputField type="email" name="emailSignup" ref={signupEmailRef}/>
+                    <ErrorMessage>{emailError}</ErrorMessage>
                     <Label htmlFor="passwordSignup"> Password: </Label>
                     <InputField type="password" name="passwordSignup" ref={signupPasswordRef}/>
+                    <ErrorMessage>{passwordError}</ErrorMessage>
                     <Label htmlFor="confirmPasswordSignup"> Confirm-Password: </Label>
                     <InputField type="password" name="confirmPasswordSignup" ref={signupConfirmPasswordRef}/>
-                    <Button onClick={()=>dispatch(signup(signupNameRef.current.value,signup))}> Login </Button>
+                    <ErrorMessage>{confirmPasswordError}</ErrorMessage>
+                    <Button onClick={()=>validateSignup()} disabled={signupData.loading}> Signup </Button>
                 </Divider>
             </MainContainer>
         </Container>

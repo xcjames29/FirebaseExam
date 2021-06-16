@@ -3,10 +3,11 @@ import {
     BrowserRouter as Router,
     Switch,
     Route,
-    Link
   } from "react-router-dom";
 
 import Login from "./Login";
+import Display from "./Display";
+
 
 export default function Main(){
 
@@ -16,8 +17,8 @@ export default function Main(){
             <Route exact path="/" >
                 <Login />
             </Route>
-            <Route path="/storage" >
-                
+            <Route path="/display" >
+                <Display />
             </Route>
         </Switch>
     </Router>
