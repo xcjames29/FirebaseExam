@@ -61,7 +61,7 @@ const AddButton = styled.button`
     padding: 5px 20px; 
 `;
 export default function AddDialog(props){
-    let [category, setCategory] = useState("");
+    let [category, setCategory] = useState("mobile");
     let dispatch = useDispatch();
     let nameRef = useRef();
     let priceRef = useRef();
@@ -77,7 +77,7 @@ export default function AddDialog(props){
         if(price.length ===0) hasError =true
         if(desc.length===0) hasError = true
         if(!hasError){
-            dispatch(addData(name,desc,price,image))
+            dispatch(addData(name,desc,price,image,category))
         }
     }
     return(

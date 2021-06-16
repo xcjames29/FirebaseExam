@@ -113,8 +113,13 @@ export let addData = (name,desc,price,image,category) =>{
                 price:price,
                 category:category
             };
-            if(image!=="") data['image'] = image;
-            let res = await databaseRef.collection("storageList").add(data)
+            if(image) data['image'] = image;
+            let res = await databaseRef.collection("storageList").add({
+                name: name,
+                description: desc,
+                price: parseInt(price),
+                category:category
+            })
             console.log("Add new", res.id)
         }
         catch(e){
